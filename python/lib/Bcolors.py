@@ -16,7 +16,7 @@ class Bcolors:
 
 	@staticmethod
 	def printPassed(string):
-		print(Bcolors.OKGREEN + "PASSED: " + string + Bcolors.ENDC)
+		print(Bcolors.OKGREEN + "INFO: " + string + Bcolors.ENDC)
 
 	@staticmethod
 	def printWarning(string):

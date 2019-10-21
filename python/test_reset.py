@@ -20,9 +20,10 @@ def chip_setup():
     real_freq = chip.set_clock(100, writePort)
     print("Real freq: " + str(real_freq))
 
-	# chip.start(writePort)
-    #
     time.sleep(2.5)
+
+    chip.start(writePort)
+
 
     # Send a program to the chip
     chip.reset(readPort, writePort)

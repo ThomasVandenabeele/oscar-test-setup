@@ -27,43 +27,43 @@ def start(writePort):
 def enable_write_mode(writePort):
 	Bcolors.printInfo("Enabling write mode ...")
 	data = (4095 << 4) | 1 #FFF1
-	Bcolors.printInfo("Instruction: " + "0x{:04x}".format(data))
+	#Bcolors.printInfo("Instruction: " + "0x{:04x}".format(data))
 	instruction = (instructions.spi_write << 29) | data
 	writePort.sendInt(instruction)
 
 def enable_read_mode(memory, writePort):
 	Bcolors.printInfo("Enabling READ mode for memory " + str(memory) + " ...")
 	data = (4095 << 4) | (memory << 2) | 0
-	Bcolors.printInfo("Instruction: " + "0x{:04x}".format(data))
+	#Bcolors.printInfo("Instruction: " + "0x{:04x}".format(data))
 	instruction = (instructions.spi_write << 29) | data
 	writePort.sendInt(instruction)
 
 def enable_exit_mode(writePort):
 	Bcolors.printInfo("Enabling EXIT mode ...")
 	data = (4095 << 4) | 3
-	Bcolors.printInfo("Instruction: " + "0x{:04x}".format(data))
+	#Bcolors.printInfo("Instruction: " + "0x{:04x}".format(data))
 	instruction  = (instructions.spi_write << 29) | data
 	writePort.sendInt(instruction)
 
 def write_mem(n_addr, writePort):
 	Bcolors.printInfo("Writing memory from 0 to {} ...".format(n_addr))
 	instruction  = (instructions.write_prog << 29) | n_addr
-	Bcolors.printInfo("Instruction: " + "0x{:04x}".format(instruction))
+	#Bcolors.printInfo("Instruction: " + "0x{:04x}".format(instruction))
 	writePort.sendInt(instruction)
 
 def write_to_mem(addr, data, writePort):
 	Bcolors.printInfo("Write " + str(data) + " to addr " + str(addr))
 	instruction_addr = (instructions.spi_write << 29) | addr
-	Bcolors.printInfo("Instruction: " + "0x{:04x}".format(addr))
+	#Bcolors.printInfo("Instruction: " + "0x{:04x}".format(addr))
 	writePort.sendInt(instruction_addr)
 	instruction_data = (instructions.spi_write << 29) | data
-	Bcolors.printInfo("Instruction: " + "0x{:04x}".format(data))
+	#Bcolors.printInfo("Instruction: " + "0x{:04x}".format(data))
 	writePort.sendInt(instruction_data)
 
 def read_addr(addr, writePort):
 	instruction  = (instructions.spi_write << 29) | addr
 	Bcolors.printInfo("Reading addr " + str(addr))
-	Bcolors.printInfo("Instruction: " + "0x{:04x}".format(addr))
+	#Bcolors.printInfo("Instruction: " + "0x{:04x}".format(addr))
 	writePort.sendInt(instruction)
 
 def clear_results(readPort):

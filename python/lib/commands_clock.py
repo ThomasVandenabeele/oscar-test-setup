@@ -58,7 +58,7 @@ class Clock:
 			Bcolors.printInfo("Nearest frequency = " + str(self.frequencies[idx]) + " for requested frequency " + str(frequency))
 		return self.frequencies[idx]
 
-	def setFrequency(self,frequency,writePort,verbose=True):
+	def setFrequency(self,frequency,writePort,verbose=False):
 		## Set extra 8 divisor on or off +
 		#if frequency < 5:
 		#	extraDivOn = True

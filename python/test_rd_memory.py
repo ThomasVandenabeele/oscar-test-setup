@@ -19,24 +19,26 @@ def chip_setup():
 		print(Bcolors.FAIL + "Could not open write port, quitting" + Bcolors.ENDC)
 
 	# Set clock frequency
-	real_freq = chip.set_clock(50, writePort)
+	real_freq = chip.set_clock(10, writePort)
 	print("Real freq: " + str(real_freq))
 
+	time.sleep(1)
 
-	# Send a program to the chip
+	# Send reset to the chip
 	chip.reset(readPort, writePort)
 
-	#time.sleep(0.5)
+	time.sleep(0.5)
 
 	chip.enable_write_mode(writePort)
 	i = 1;
 	while i<101:
 		chip.write_to_mem(i, i, writePort)
+		# input("Press Enter to continue...")
 		i = i + 1
 
-	#input("Press Enter to continue...")
+		# input("Press Enter to continue...")
 	chip.enable_exit_mode(writePort)
-	input("Press Enter to continue...")
+	# input("Press Enter to continue...")
 
 	now = datetime.now()
 	date_time = now.strftime("%m%d%Y-%H%M%S")
