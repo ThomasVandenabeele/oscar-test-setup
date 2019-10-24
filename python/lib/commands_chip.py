@@ -72,7 +72,7 @@ def clear_results(readPort):
 		readPort.readInt()
 		i = i + 1
 
-def readout_results(readPort, n_results=2048, filename=None):
+def readout_results(readPort, filename, n_results=2048):
 	if not filename is None:
 		file=open(filename,'a')
 
@@ -88,7 +88,7 @@ def readout_results(readPort, n_results=2048, filename=None):
 	if not filename is None:
 		file.close()
 
-def readout_memory(readPort, writePort, start, end, memory=0, filename=None):
+def readout_memory(readPort, writePort, start, end, filename, memory=0):
 	enable_read_mode(memory, writePort)
 	#input("Press Enter to continue...")
 
@@ -104,9 +104,10 @@ def readout_memory(readPort, writePort, start, end, memory=0, filename=None):
 	enable_exit_mode(writePort)
 
 	time.sleep(0.5)
-	readout_results(readPort, end-start+1, filename)
+	readout_results(readPort, filename, end-start+1)
 
 def set_clock(frequency, writePort):
 	clock = Clock()
 	freq  = clock.setFrequency(frequency, writePort)
+	
 	return freq

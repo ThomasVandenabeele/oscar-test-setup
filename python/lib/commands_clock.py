@@ -34,20 +34,20 @@ class Clock:
 					 "Filter Reg2 "  : 0x4F}
 
 	def __init__(self):
-		if Clock.clockDefined:
-			Bcolors.printError("clock already constructed, only one clock object can exist!")
-			return -1
-		else:
-			Clock.clockDefined = True
+		#if Clock.clockDefined:
+		#	Bcolors.printInfo("clock already constructed")
+			#return -1
+		#else:
+		Clock.clockDefined = True
 
 #			self.devFile = os.open("/dev/mem",os.O_RDWR | os.O_SYNC)
 #			self.map = mmap.mmap(self.devFile,length=0x1FFF,flags=mmap.MAP_SHARED,prot=mmap.PROT_READ|mmap.PROT_WRITE,offset=0x40009000)
-			self.inputFrequency = 100e6
-			frequencies = []
-			for freqFile in os.listdir(cnst.PROJDIR + "/python/lookup_data/"):
-				if freqFile.endswith(".csv"):
-					frequencies.append((freqFile[5:-4]))
-			self.frequencies = np.asarray(frequencies,dtype=float)
+		self.inputFrequency = 100e6
+		frequencies = []
+		for freqFile in os.listdir(cnst.PROJDIR + "/python/lookup_data/"):
+			if freqFile.endswith(".csv"):
+				frequencies.append((freqFile[5:-4]))
+		self.frequencies = np.asarray(frequencies,dtype=float)
 
 	def getFrequencies(self):
 		return self.frequencies
