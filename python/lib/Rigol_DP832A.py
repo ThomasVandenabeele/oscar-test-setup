@@ -15,7 +15,12 @@ class RigolDP832A():
 
     def set_voltage(self, voltage, channel=1):
         Bcolors.printInfo("Rigol DP832A - Setting voltage on channel " + str(channel) + " to " + str(voltage) + "V")
-        self.rigol.setVoltage(voltage, channel)
+        if voltage <= 1 or channel == 2:
+            self.rigol.setVoltage(voltage, channel)
+        else:
+            Bcolors.printInfo("Rigol DP832A - Voltage to high on channel " + str(channel) + " for voltage " + str(voltage) + "V")
+            self.turn_off_all()
+            exit()
 
     def get_real_voltage(self, channel=1):
         Bcolors.printInfo("Rigol DP832A - Getting real voltage on channel " + str(channel))

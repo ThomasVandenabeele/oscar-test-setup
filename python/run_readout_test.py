@@ -10,9 +10,23 @@ from datetime import datetime
 import time
 import re
 import yaml
-import os
 
-def run_input_vector(name, vddc, clockfreq):
+def readout_compare_results(readPort, writePort, vectorfn, configfn):
+    print(">> Reading back results...")
+    now = datetime.now()
+    date_time = now.strftime("%m%d-%H%M%S")
+    filename = "../results/" + str(date_time) + "_spi-results.txt"
+    chip.readout_memory(readPort, writePort, 0, 7, filename, const.WR_MEMORY)
+
+    print(">> Checking results...")
+    outputfn = "../output_vectors/" + vectorfn + ".out"
+    vectorreffn = "../input_vectors/" + vectorfn + ".out"
+
+    correct = compare_results.check(configfn, vectorreffn, filename, outputfn)
+    return correct
+
+
+def run_input_vector(name):
     vectorfn = name
     # vectorfn = 'input_vector_C1'
     configfn = "../input_vectors/" + vectorfn + ".config"
@@ -38,13 +52,13 @@ def run_input_vector(name, vddc, clockfreq):
     rigol = RigolDP832A("10.11.98.59")
     rigol.set_voltage(cfg['vdd'], 1)
     rigol.set_voltage(cfg['vdde'], 2)
-    rigol.set_voltage(vddc, 3)
+    rigol.set_voltage(cfg['vddc'], 3)
     rigol.turn_on_all()
     time.sleep(0.5)
 
     print(">> Configuring clock frequency...")
     # Set clock frequency
-    real_freq = chip.set_clock(clockfreq, writePort)
+    real_freq = chip.set_clock(cfg['clock'], writePort)
     #print("Real freq: " + str(real_freq))
     Bcolors.printPassed("CLOCK - Real frequency is " + str(real_freq) + "MHz")
 
@@ -83,54 +97,13 @@ def run_input_vector(name, vddc, clockfreq):
 
     time.sleep(5)
 
-    result_array = []
-    for ntimes in range(cfg['n_readout']):
-        print(">> Reading back results...")
-        now = datetime.now()
-        date_time = now.strftime("%m%d-%H%M%S")
-        filename = "../results/" + str(date_time) + "_spi-results.txt"
-        chip.readout_memory(readPort, writePort, 0, 7, filename, const.WR_MEMORY)
+    out = open("outputtest.txt", "w")
+    for i in range(1000):
+        correct = readout_compare_results(readPort, writePort, vectorfn, configfn)
+        out.write(str(correct) + "\n")
+        time.sleep(0.1)
 
-        print(">> Checking results...")
-        outputfn = "../output_vectors/" + vectorfn + ".out"
-        vectorreffn = "../input_vectors/" + vectorfn + ".out"
-
-        correct = compare_results.check(configfn, vectorreffn, filename, outputfn)
-        os.remove(filename)
-        result_array.append(correct)
-
-    # with open("../input_vectors/" + vectorfn + ".config", 'r') as cfgfile:
-    #     cfg = yaml.load(cfgfile, yaml.Loader)
-    # ct_size = cfg['plaintext_size']
-    # tag_size = cfg['tag_size']
-    #
-    # out = open("../output_vectors/" + vectorfn + ".out", "w")
-    # out.write("#C\n")
-    # with open(filename) as fp:
-    #    line = fp.readline()
-    #    while line:
-    #        byte1 = line[0:2]
-    #        byte2 = line[2:4]
-    #
-    #        for i in range(2):
-    #            if ct_size > 0:
-    #                out.write(line[i*2 : i*2+2].upper() + "\n")
-    #                ct_size -= 1
-    #            elif ct_size == 0:
-    #                if tag_size == cfg['tag_size']:
-    #                    out.write("#T\n")
-    #                    line = fp.readline()
-    #        if ct_size == 0:
-    #            for i in range(2):
-    #                if tag_size > 0:
-    #                    out.write(line[i*2 : i*2+2].upper() + "\n")
-    #                    tag_size -= 1
-    #
-    #        line = fp.readline()
-    # out.close()
-
-
-    vddc_real = rigol.get_real_voltage(3)
+    out.close()
 
     print(">> Closing connections...")
     # Close ports
@@ -139,4 +112,6 @@ def run_input_vector(name, vddc, clockfreq):
 
     rigol.stop()
 
-    return vddc_real, real_freq, result_array
+    return correct
+
+run_input_vector("input_vector_C1")

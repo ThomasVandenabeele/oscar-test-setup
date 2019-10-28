@@ -4,6 +4,7 @@ from lib.WritePort import WritePort
 from lib.ReadPort import ReadPort
 import lib.commands_chip as chip
 import lib.constants as const
+from lib.Rigol_DP832A import RigolDP832A
 from datetime import datetime
 import time
 
@@ -17,6 +18,14 @@ def chip_setup():
 		quit()
 	if not readPort.openPort():
 		print(Bcolors.FAIL + "Could not open write port, quitting" + Bcolors.ENDC)
+
+	print(">> Configuring power supply...")
+	rigol = RigolDP832A("10.11.98.59")
+	rigol.set_voltage(1, 1)
+	rigol.set_voltage(1.8, 2)
+	rigol.set_voltage(0, 3)
+	rigol.turn_on_all()
+	time.sleep(0.5)
 
 	# Set clock frequency
 	real_freq = chip.set_clock(10, writePort)
@@ -43,12 +52,13 @@ def chip_setup():
 	now = datetime.now()
 	date_time = now.strftime("%m%d%Y-%H%M%S")
 	filename = "../results/" + str(date_time) + "_spi-results.txt"
-	chip.readout_memory(readPort, writePort, 0, 42, const.RD_MEMORY, filename)
+	chip.readout_memory(readPort, writePort, 0, 42, filename, const.RD_MEMORY)
 
 
 	# Close ports
 	writePort.closePort()
 	readPort.closePort()
+	rigol.stop()
 
 	return
 
